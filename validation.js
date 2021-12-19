@@ -39,6 +39,7 @@ const loginValidation = (data) => {
             .max(1024)
             .required()
     });
+
     
     return schema.validate(data);
 }
