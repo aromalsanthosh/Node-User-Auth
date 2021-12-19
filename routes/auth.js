@@ -5,6 +5,7 @@ const User = require('../model/User');
 //validation
 const { registerValidation, loginValidation } = require('../validation');
 
+//register
 router.post('/register',async (req,res) => {
     const {error} = registerValidation(req.body);
     
@@ -40,6 +41,33 @@ router.post('/register',async (req,res) => {
         res.status(400).send(err);
     }
 });
+
+
+//login
+router.post('/login', async (req,res) => {
+    const {error} = loginValidation(req.body);
+    if(error){
+        return res.status(400).send(error.details[0].message);
+    }
+    
+    //check if user exists
+    const user = await User.findOne({email: req.body.email});
+    if(!user){
+        return res.status(400).send('Email or password is incorrect');
+    }
+
+    //check if password is correct
+    const validPass = await bcrypt.compare(req.body.password, user.password);
+    if(!validPass){
+        return res.status(400).send('Email or password is incorrect');
+    }
+
+    //login successful
+    res.send('Login successful');
+});
+
+
+
 
 
 
